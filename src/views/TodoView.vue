@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import FormWorkInList from '../components/FormWorkInList.vue';
+
+const workList = [
+  { id: 0, lable: 'Work 1' },
+  { id: 1, lable: 'Work 2' },
+  { id: 2, lable: 'Work 3' }
+]
 
 </script>
 
@@ -12,7 +19,11 @@
 
     <div class="content">
         <el-scrollbar height="400px">
-            <p v-for="item in 20" :key="item" class="scrollbar-demo-item">{{ item }}</p>
+            <FormWorkInList 
+                v-for="item in workList"         
+                :work="item"
+                :key="item.id"
+            />
         </el-scrollbar>
     </div>
   </div>
@@ -38,18 +49,6 @@
 
 .header .linktoapp{
     text-decoration: none;
-}
-
-.content .scrollbar-demo-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 50px;
-  margin: 10px;
-  text-align: center;
-  border-radius: 4px;
-  background: var(--el-color-primary-light-9);
-  color: var(--el-color-primary);
 }
 
 </style>
