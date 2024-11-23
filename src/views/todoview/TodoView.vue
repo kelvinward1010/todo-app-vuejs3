@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FormWorkInList from '../components/FormWorkInList.vue';
+import FormWorkInList from './components/FormWorkInList.vue';
 
 const workList = [
   { id: 0, lable: 'Work 1' },
