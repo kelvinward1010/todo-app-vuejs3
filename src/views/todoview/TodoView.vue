@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import type { ButtonInstance } from "element-plus";
 import FormWorkInList from "./components/FormWorkInList.vue";
 
@@ -10,6 +10,27 @@ const workList = [
 ];
 
 const centerDialogVisible = ref(false);
+const formRef = ref<FormInstance>()
+const numberValidateForm = reactive({
+    age: '',
+})
+
+const submitForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate((valid) => {
+        if (valid) {
+            console.log('submit!')
+        } else {
+            console.log('error submit!')
+        }
+    })
+}
+
+const resetForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.resetFields()
+}
+
 </script>
 
 <template>
@@ -26,8 +47,20 @@ const centerDialogVisible = ref(false);
                     <el-button plain @click="centerDialogVisible = true">
                         Create
                     </el-button>
-                    <el-dialog v-model="centerDialogVisible" title="Warning" width="500" align-center>
-                        <span>Open the dialog from the center from the screen</span>
+                    <el-dialog v-model="centerDialogVisible" title="Create a new work" width="500" align-center>
+                        <el-form ref="formRef" style="max-width: 600px" :model="numberValidateForm" label-width="auto"
+                            class="demo-ruleForm">
+                            <el-form-item label="age" prop="age" :rules="[
+                                { required: true, message: 'age is required' },
+                                { type: 'number', message: 'age must be a number' },
+                            ]">
+                                <el-input v-model.number="numberValidateForm.age" type="text" autocomplete="off" />
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="submitForm(formRef)">Submit</el-button>
+                                <el-button @click="resetForm(formRef)">Reset</el-button>
+                            </el-form-item>
+                        </el-form>
                         <template #footer>
                             <div class="dialog-footer">
                                 <el-button @click="centerDialogVisible = false">Cancel</el-button>
@@ -69,11 +102,11 @@ const centerDialogVisible = ref(false);
     text-decoration: none;
 }
 
-.actions{
+.actions {
     padding: 20px;
 }
 
-.actions .create{
+.actions .create {
     width: fit-content;
 }
 
