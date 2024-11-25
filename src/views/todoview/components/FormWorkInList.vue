@@ -1,15 +1,24 @@
 <script setup lang="ts">
-  const props = defineProps({
-    work: Object
-  });
+  import { defineProps } from 'vue';
+  import {Work}  from "../../../types/index.ts";
+
+  const props = defineProps<{ 
+    work: Work;
+    editItem: (work: Work) => void;
+    deleteItem: (id: number) => void; 
+  }>();
   const work = props?.work;
 </script>
 
 <template>
   <div class="container-work-in-list">
-    <p class="scrollbar-demo-item">
-      {{ work.lable }}
-    </p>
+    <div class="scrollbar-demo-item">
+      <p>Title: {{ work.title }}</p>
+      <div class="actions">
+        <el-button type="primary" @click="editItem(work)">Edit</el-button>
+        <el-button type="danger" @click="props.deleteItem(work.id)">Delete</el-button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -21,10 +30,19 @@
 .scrollbar-demo-item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   text-align: center;
   border-radius: 4px;
   background: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
+  padding: 10px 20px;
 }
+
+.scrollbar-demo-item .actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  align-items: center;
+}
+
 </style>
