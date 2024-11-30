@@ -1,22 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import type { FormRules, FormInstance } from "element-plus";
 import FormWorkInList from "./components/FormWorkInList.vue";
 import storage from '../../utils/storage';
 import {Work}  from "../../types/index.ts";
 
-const loadItems = () => { 
-    items.value = storage.getItems(); 
-};
 
 const centerDialogVisible = ref(false);
 const formRef = ref<FormInstance>();
-const items = ref(storage.getItems());
+const items = reactive<Work[]>(storage.getItems());
+
 const formData = reactive({
     id: 0,
     title: '',
     content: '',
 })
+
+const loadItems = () => { 
+    const data = storage.getItems(); 
+    items.splice(0, items.length, ...data);
+};
 
 const isEditMode = ref(false);
 
@@ -48,15 +51,22 @@ const openEditDialog = (work: Work) => {
 };
 
 
-const submitFormCreate = (formEl: FormInstance | undefined) => {
+const submitForm = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            
+            const dataField = { 
+                title: formData.title, 
+                content: formData.content 
+            }
             if (isEditMode.value) {
-                storage.updateItem(formData.id, { title: formData.title, content: formData.content });
+                const index = items.findIndex(item => item.id === formData.id); 
+                if (index !== -1) {
+                    items[index] = { ...items[index], id: formData.id, ...dataField }; 
+                }
+                storage.updateItem(formData.id, dataField);
             } else {
-                storage.addItem({ title: formData.title, content: formData.content });
+                storage.addItem(dataField);
             }
             centerDialogVisible.value = false;
             formEl.resetFields();
@@ -80,6 +90,9 @@ const deleteItem = (id: number) => {
 onMounted(() => { 
     loadItems(); 
 });
+
+watch(items, () => { 
+}, { deep: true });
 
 </script>
 
@@ -119,7 +132,7 @@ onMounted(() => {
                             <div class="dialog-footer">
                                 <el-button @click="centerDialogVisible = false">Cancel</el-button>
                                 <el-button @click="resetForm(formRef)">Reset</el-button>
-                                <el-button type="primary" @click="submitFormCreate(formRef)">Confirm</el-button>
+                                <el-button type="primary" @click="submitForm(formRef)">Confirm</el-button>
                             </div>
                         </template>
                     </el-dialog>

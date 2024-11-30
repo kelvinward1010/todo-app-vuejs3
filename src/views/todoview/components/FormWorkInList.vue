@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { defineProps } from 'vue';
   import {Work}  from "../../../types/index.ts";
 
   const props = defineProps<{ 
@@ -8,6 +7,15 @@
     deleteItem: (id: number) => void; 
   }>();
   const work = props?.work;
+
+  const emitEditItem = () => { 
+    props.editItem(work); 
+  };
+
+  const emitDeleteItem = () => { 
+    props.deleteItem(work.id); 
+  };
+
 </script>
 
 <template>
@@ -15,8 +23,8 @@
     <div class="scrollbar-demo-item">
       <p>Title: {{ work.title }}</p>
       <div class="actions">
-        <el-button type="primary" @click="editItem(work)">Edit</el-button>
-        <el-button type="danger" @click="props.deleteItem(work.id)">Delete</el-button>
+        <el-button type="primary" @click="emitEditItem">Edit</el-button>
+        <el-button type="danger" @click="emitDeleteItem">Delete</el-button>
       </div>
     </div>
   </div>
